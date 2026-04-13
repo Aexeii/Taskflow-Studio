@@ -1,0 +1,20 @@
+name: mobile_app
+description: Mobile shell for the music player.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  core:
+    path: ../../packages/core
+  platform_services:
+    path: ../../packages/platform_services
+  ui_kit:
+    path: ../../packages/ui_kit
+
+flutter:
+  uses-material-design: true

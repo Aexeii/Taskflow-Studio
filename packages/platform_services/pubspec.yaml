@@ -1,0 +1,11 @@
+name: platform_services
+description: Platform-specific implementations for desktop and mobile.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  core:
+    path: ../core
