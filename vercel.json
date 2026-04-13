@@ -1,0 +1,5 @@
+{
+  "framework": null,
+  "buildCommand": "cd apps/web && flutter build web",
+  "outputDirectory": "apps/web/build/web"
+}
