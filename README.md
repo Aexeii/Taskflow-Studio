@@ -1,8 +1,6 @@
 # ⚡ Aero Tasks
 
-A dark futuristic task management web app built with **Next.js 14**, **Supabase**, and a custom **glassmorphism design system** — frosted panels, neon accents, floating cards, and smooth micro-interactions.
-
----
+A dark futuristic task management web app built with **Next.js 14**, **MongoDB + Prisma**, and a custom **glassmorphism design system**.
 
 ## ✨ Features
 
@@ -11,26 +9,24 @@ A dark futuristic task management web app built with **Next.js 14**, **Supabase*
 - Project organization with color coding
 - Task CRUD with priority, status, tags, due dates
 - Search + multi-filter system
-- Supabase auth (email/password + GitHub OAuth)
+- JWT authentication with MongoDB
 - Real-time cloud sync
 - Fully responsive — mobile, tablet, desktop
 - Dark glassmorphism UI system
 
----
-
 ## 🚀 Quick Start
 
-### 1. Install
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Set Up Supabase
+### 2. Set Up MongoDB
 
-1. Create a project at [supabase.com](https://supabase.com)
-2. Go to **SQL Editor** → paste and run `supabase-schema.sql`
-3. Go to **Settings → API** → copy your URL and anon key
+1. Create a project at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a cluster and get your connection string
+3. Update `.env.local` with your MongoDB URL
 
 ### 3. Environment Variables
 
@@ -41,18 +37,55 @@ cp .env.example .env.local
 Fill in `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/taskflow?retryWrites=true&w=majority"
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key-here
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-### 4. Run
+### 4. Setup Prisma
+
+```bash
+npm run db:push
+```
+
+### 5. Run Development Server
 
 ```bash
 npm run dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🛠️ Stack
+
+- **Frontend**: Next.js 14 · React 18 · Tailwind CSS · Framer Motion
+- **Backend**: Next.js API Routes · Node.js
+- **Database**: MongoDB · Prisma ORM
+- **Auth**: JWT · bcryptjs
+- **UI Components**: dnd-kit · Lucide React · react-hot-toast
+- **Deployment**: Vercel
+
+## 📁 Project Structure
+
+```
+app/
+├── api/              # API routes
+│   ├── auth/         # Authentication endpoints
+│   ├── tasks/        # Task management endpoints
+│   └── projects/     # Project management endpoints
+├── auth/             # Auth pages (login, signup)
+├── dashboard/        # Main dashboard
+└── layout.tsx        # Root layout
+
+components/          # Reusable components
+lib/                 # Utilities
+├── db.ts             # Prisma client
+└── auth.ts           # Auth helpers
+
+prisma/              # Database schema
+└── schema.prisma
+```
 
 ## 🌐 Deploy to Vercel
 
@@ -60,90 +93,6 @@ npm run dev
 npx vercel
 ```
 
-Or connect your GitHub repo at [vercel.com](https://vercel.com) and add the two env vars in the dashboard.
+## 📝 License
 
-**After deploying**, update Supabase → Authentication → URL Configuration:
-- Site URL: `https://your-app.vercel.app`
-- Redirect URLs: `https://your-app.vercel.app/auth/callback`
-
----
-
-## 🎨 Design System Tokens
-
-| Token | Hex | Usage |
-|---|---|---|
-| `aero-bg` | `#080c14` | Page background |
-| `aero-card` | `#111926` | Card background |
-| `aero-border` | `#1e2d45` | Borders |
-| `aero-cyan` | `#38c4e8` | Primary accent |
-| `aero-blue` | `#4f8ef7` | Secondary |
-| `aero-violet` | `#7c5df9` | Tertiary |
-| `aero-green` | `#34d399` | Success |
-| `aero-red` | `#f43f5e` | Danger |
-
-Key CSS utilities: `.glass`, `.glass-sm`, `.aero-input`, `.btn-primary`, `.btn-ghost`, `.task-card`, `.gradient-border`
-
----
-
-## 📱 Mobile App (React Native)
-
-```bash
-npx create-expo-app aero-tasks-mobile --template blank-typescript
-npm install @supabase/supabase-js @react-native-async-storage/async-storage
-npm install @react-navigation/native @react-navigation/bottom-tabs
-npm install react-native-reanimated react-native-gesture-handler zustand
-
-# Build APK
-npm install -g eas-cli && eas login
-eas build --platform android --profile preview
-```
-
-Use the same Supabase project — all data syncs automatically.
-
----
-
-## 🖥️ Desktop App (Electron)
-
-```bash
-mkdir aero-tasks-desktop && cd aero-tasks-desktop
-npm init -y && npm install electron electron-builder
-```
-
-`main.js`:
-```js
-const { app, BrowserWindow, Tray, Menu } = require('electron');
-app.whenReady().then(() => {
-  const win = new BrowserWindow({
-    width: 1280, height: 800,
-    titleBarStyle: 'hidden',
-    backgroundColor: '#080c14',
-  });
-  win.loadURL('https://your-app.vercel.app'); // your deployed URL
-});
-```
-
-```bash
-npx electron-builder --win   # outputs .exe
-```
-
----
-
-## 🔗 Architecture
-
-```
-         ┌─────────────────────────────┐
-         │        SUPABASE              │
-         │  PostgreSQL + Auth + RT      │
-         └────────────┬────────────────┘
-              ┌───────┼───────┐
-              ▼       ▼       ▼
-          Web App  Mobile  Desktop
-          Next.js   RN/Expo  Electron
-          Vercel    EAS APK  .exe
-```
-
----
-
-## 🛠️ Stack
-
-Next.js 14 · Tailwind CSS · Zustand · Supabase · dnd-kit · date-fns · Framer Motion · react-hot-toast · Vercel
+MIT
