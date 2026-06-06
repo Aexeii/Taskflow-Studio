@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import CalendarClient from './client';
 
 export default async function CalendarPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
