@@ -17,21 +17,28 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleSignup(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } },
-    });
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success('Check your email to confirm your account!');
-      router.push('/auth/login');
-    }
+  e.preventDefault();
+  setLoading(true);
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  });
+  if (error) {
+    toast.error(error.message);
     setLoading(false);
+    return;
   }
+    
+  // If email confirmation is off, session is available immediately
+  if (data.session) {
+    router.push('/dashboard');
+  } else {
+    toast.success('Check your email to confirm your account!');
+    router.push('/auth/login');
+  }
+  setLoading(false);
+}
 
   async function handleGoogle() {
     await supabase.auth.signInWithOAuth({
