@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import ProjectsClient from './client';
 
 export default async function ProjectsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
