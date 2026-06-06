@@ -1,27 +1,28 @@
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Ambient orbs */}
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden aero-bg">
+      {/* Ambient orbs - enhanced */}
       <div
         className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(56,196,232,0.06) 0%, transparent 70%)',
-          filter: 'blur(40px)',
+          background: 'radial-gradient(circle, rgba(56,196,232,0.08) 0%, transparent 70%)',
+          filter: 'blur(60px)',
         }}
       />
       <div
         className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(124,93,249,0.07) 0%, transparent 70%)',
-          filter: 'blur(40px)',
+          background: 'radial-gradient(circle, rgba(124,93,249,0.08) 0%, transparent 70%)',
+          filter: 'blur(60px)',
         }}
       />
-      <div className="relative z-10 w-full max-w-md">
+
+      <div className="relative z-10 w-full flex flex-col items-center">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <div className="inline-flex items-center gap-3 mb-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              className="w-10 h-10 rounded-aero-sm flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #38c4e8, #4f8ef7)' }}
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -35,7 +36,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               </svg>
             </div>
             <span
-              className="text-2xl font-bold tracking-tight"
+              className="text-3xl font-bold tracking-tight"
               style={{ fontFamily: 'var(--font-display)', color: '#e2eaf5' }}
             >
               Aero
