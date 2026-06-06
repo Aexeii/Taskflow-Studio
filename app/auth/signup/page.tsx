@@ -43,7 +43,8 @@ export default function SignupPage() {
     toast.error('Account created! Please sign in.');
     router.push('/auth/login');
   } else {
-    router.push('/dashboard');
+    window.location.href = '/dashboard';
+  }
   }
 
   setLoading(false);
