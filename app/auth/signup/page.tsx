@@ -45,7 +45,6 @@ export default function SignupPage() {
   } else {
     window.location.href = '/dashboard';
   }
-  }
 
   setLoading(false);
 }
