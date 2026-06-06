@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Github } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Github, Chrome } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -29,6 +29,13 @@ export default function LoginPage() {
     setLoading(false);
   }
 
+  async function handleGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${location.origin}/auth/callback` },
+    });
+  }
+
   async function handleGithub() {
     await supabase.auth.signInWithOAuth({
       provider: 'github',
@@ -37,7 +44,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="glass p-8" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
+    <div className="glass p-8 w-full max-w-md" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
       <h1
         className="text-2xl font-bold mb-1"
         style={{ fontFamily: 'var(--font-display)', color: '#e2eaf5' }}
@@ -48,10 +55,30 @@ export default function LoginPage() {
         Sign in to your workspace
       </p>
 
-      {/* GitHub OAuth */}
+      {/* Google OAuth - Primary */}
+      <button
+        onClick={handleGoogle}
+        className="w-full flex items-center justify-center gap-2.5 mb-3 py-3 rounded-aero-sm text-sm font-medium transition-all"
+        style={{
+          background: 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))',
+          border: '1px solid rgba(56,196,232,0.5)',
+          color: '#e2eaf5',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.3), rgba(79,142,247,0.3))';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))';
+        }}
+      >
+        <Chrome size={16} />
+        Continue with Google
+      </button>
+
+      {/* GitHub OAuth - Secondary */}
       <button
         onClick={handleGithub}
-        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-xl text-sm font-medium transition-all"
+        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-aero-sm text-sm font-medium transition-all"
         style={{
           background: 'rgba(30,45,69,0.5)',
           border: '1px solid rgba(30,45,69,0.9)',
