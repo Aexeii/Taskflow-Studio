@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Chrome } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SignupPage() {
@@ -33,8 +33,15 @@ export default function SignupPage() {
     setLoading(false);
   }
 
+  async function handleGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${location.origin}/auth/callback` },
+    });
+  }
+
   return (
-    <div className="glass p-8" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
+    <div className="glass p-8 w-full max-w-md" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
       <h1
         className="text-2xl font-bold mb-1"
         style={{ fontFamily: 'var(--font-display)', color: '#e2eaf5' }}
@@ -44,6 +51,32 @@ export default function SignupPage() {
       <p className="text-sm mb-8" style={{ color: '#7a93b4' }}>
         Start managing tasks with Aero
       </p>
+
+      {/* Google OAuth - Primary Option */}
+      <button
+        onClick={handleGoogle}
+        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-aero-sm text-sm font-medium transition-all"
+        style={{
+          background: 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))',
+          border: '1px solid rgba(56,196,232,0.5)',
+          color: '#e2eaf5',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.3), rgba(79,142,247,0.3))';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))';
+        }}
+      >
+        <Chrome size={16} />
+        Sign up with Google
+      </button>
+
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex-1 h-px" style={{ background: 'rgba(30,45,69,0.8)' }} />
+        <span className="text-xs" style={{ color: '#3d5478' }}>or</span>
+        <div className="flex-1 h-px" style={{ background: 'rgba(30,45,69,0.8)' }} />
+      </div>
 
       <form onSubmit={handleSignup} className="space-y-4">
         <div>
