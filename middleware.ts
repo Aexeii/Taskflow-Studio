@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+export const runtime = 'nodejs';
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -35,6 +37,25 @@ export async function middleware(request: NextRequest) {
     url.pathname.startsWith('/dashboard') ||
     url.pathname.startsWith('/projects') ||
     url.pathname.startsWith('/calendar');
+
+  if (!user && isDashboardRoute) {
+    url.pathname = '/auth/login';
+    return NextResponse.redirect(url);
+  }
+
+  if (user && isAuthRoute) {
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+
+  return supabaseResponse;
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+};    url.pathname.startsWith('/calendar');
 
   if (!user && isDashboardRoute) {
     url.pathname = '/auth/login';
