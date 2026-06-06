@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { PRIORITY_CONFIG, STATUS_CONFIG, formatDate, isOverdue } from '@/lib/utils';
 import { CheckCircle2, Circle, Flag, Calendar, Trash2, Edit3, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { cn } from '@/lib/utils';
 
 export default function ListView() {
   const { tasks, updateTask, deleteTask, openTaskModal, filters, projects } = useAppStore();
@@ -32,25 +33,26 @@ export default function ListView() {
 
   if (filtered.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 px-6">
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-          style={{ background: 'rgba(30,45,69,0.3)', border: '1px solid rgba(30,45,69,0.5)' }}
-        >
-          <CheckCircle2 size={28} style={{ color: '#3d5478' }} />
+      <div className="flex flex-col items-center justify-center h-64 px-8">
+        <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4 border border-gray-100">
+          <CheckCircle2 size={28} className="text-gray-300" />
         </div>
-        <p className="text-sm font-medium" style={{ color: '#7a93b4' }}>No tasks found</p>
-        <p className="text-xs mt-1" style={{ color: '#3d5478' }}>Try adjusting your filters</p>
+        <p className="text-sm font-medium text-gray-500">No tasks found</p>
+        <p className="text-xs mt-1 text-gray-400">Try adjusting your filters</p>
       </div>
     );
   }
 
   return (
-    <div className="px-6 pb-6">
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{ border: '1px solid rgba(30,45,69,0.5)', background: 'rgba(11,17,28,0.5)' }}
-      >
+    <div className="px-8 pb-8">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="grid grid-cols-[auto_1fr_auto] md:grid-cols-[auto_1fr_auto_auto] gap-4 px-6 py-3 bg-gray-50/50 border-b border-gray-100 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+          <div className="w-5" />
+          <div>Task</div>
+          <div className="hidden md:block">Details</div>
+          <div className="text-right">Actions</div>
+        </div>
+        
         {filtered.map((task, i) => {
           const isDone = task.status === 'done';
           const overdue = task.due_date && isOverdue(task.due_date) && !isDone;
@@ -61,57 +63,61 @@ export default function ListView() {
           return (
             <div
               key={task.id}
-              className="flex items-center gap-4 px-5 py-3.5 group transition-colors"
-              style={{
-                borderBottom: i < filtered.length - 1 ? '1px solid rgba(30,45,69,0.35)' : 'none',
-                background: 'transparent',
-              }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(30,45,69,0.15)'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
+              className={cn(
+                "grid grid-cols-[auto_1fr_auto] md:grid-cols-[auto_1fr_auto_auto] items-center gap-4 px-6 py-4 group transition-colors",
+                i < filtered.length - 1 && "border-b border-gray-50",
+                isDone ? "bg-gray-50/30" : "hover:bg-gray-50/50"
+              )}
             >
               {/* Checkbox */}
               <button
                 onClick={() => toggleDone(task)}
-                className="flex-shrink-0 transition-all"
-                style={{ color: isDone ? '#34d399' : '#3d5478' }}
+                className={cn(
+                  "flex-shrink-0 transition-all hover:scale-110",
+                  isDone ? "text-green-500" : "text-gray-300 hover:text-gray-400"
+                )}
               >
-                {isDone ? <CheckCircle2 size={17} /> : <Circle size={17} />}
+                {isDone ? <CheckCircle2 size={18} /> : <Circle size={18} />}
               </button>
 
-              {/* Priority dot */}
-              <div
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ background: priority.color }}
-              />
-
-              {/* Title */}
-              <p
-                className="flex-1 text-sm truncate"
-                style={{ color: isDone ? '#3d5478' : '#e2eaf5', textDecoration: isDone ? 'line-through' : 'none' }}
-              >
-                {task.title}
-              </p>
+              {/* Title and Priority */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ background: priority.color, opacity: isDone ? 0.5 : 1 }}
+                />
+                <p
+                  className={cn(
+                    "text-sm font-medium truncate",
+                    isDone ? "text-gray-400 line-through" : "text-gray-900"
+                  )}
+                >
+                  {task.title}
+                </p>
+              </div>
 
               {/* Meta - hidden on mobile */}
               <div className="hidden md:flex items-center gap-4 flex-shrink-0">
                 {project && (
-                  <span className="flex items-center gap-1.5 text-xs" style={{ color: '#7a93b4' }}>
+                  <span className="flex items-center gap-1.5 text-[10px] font-medium text-gray-400">
                     <div className="w-1.5 h-1.5 rounded-full" style={{ background: project.color }} />
                     {project.name}
                   </span>
                 )}
 
                 <span
-                  className="px-2 py-0.5 rounded-full text-xs"
-                  style={{ background: status.bg, color: status.color }}
+                  className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
+                  style={{ background: status.bg, color: status.color, opacity: isDone ? 0.5 : 1 }}
                 >
                   {status.label}
                 </span>
 
                 {task.due_date && (
                   <span
-                    className="flex items-center gap-1 text-xs"
-                    style={{ color: overdue ? '#f43f5e' : '#7a93b4' }}
+                    className={cn(
+                      "flex items-center gap-1 text-[10px] font-medium min-w-[80px]",
+                      overdue ? "text-red-500" : "text-gray-400"
+                    )}
                   >
                     {overdue ? <Clock size={11} /> : <Calendar size={11} />}
                     {formatDate(task.due_date)}
@@ -123,21 +129,15 @@ export default function ListView() {
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => openTaskModal(task)}
-                  className="p-1.5 rounded-lg transition-colors"
-                  style={{ color: '#7a93b4' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#38c4e8'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#7a93b4'}
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
                 >
-                  <Edit3 size={13} />
+                  <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => handleDelete(task.id)}
-                  className="p-1.5 rounded-lg transition-colors"
-                  style={{ color: '#7a93b4' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#f43f5e'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#7a93b4'}
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={14} />
                 </button>
               </div>
             </div>

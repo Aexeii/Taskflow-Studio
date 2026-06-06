@@ -22,12 +22,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Aero Tasks — Futuristic Task Management',
-  description: 'A high-performance AI-powered task management system with a dark futuristic aesthetic.',
-  keywords: ['tasks', 'productivity', 'project management', 'aero'],
+  title: 'Taskflow Studio — Minimal Task Management',
+  description: 'A clean, modern task management system with a focus on simplicity and productivity.',
+  keywords: ['tasks', 'productivity', 'project management', 'taskflow'],
   openGraph: {
-    title: 'Aero Tasks',
-    description: 'Futuristic task management for the modern era.',
+    title: 'Taskflow Studio',
+    description: 'Minimal task management for the modern era.',
     type: 'website',
   },
 };
@@ -39,24 +39,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${syne.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
-      <body className="aero-bg" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         {children}
         <Toaster
           position="bottom-right"
           toastOptions={{
             style: {
-              background: 'rgba(17, 25, 38, 0.95)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(30, 45, 69, 0.8)',
-              color: '#e2eaf5',
-              borderRadius: '10px',
+              background: '#FFFFFF',
+              border: '1px solid #E5E7EB',
+              color: '#111827',
+              borderRadius: '12px',
               fontSize: '13px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
             },
             success: {
-              iconTheme: { primary: '#34d399', secondary: '#080c14' },
+              iconTheme: { primary: '#10B981', secondary: '#FFFFFF' },
             },
             error: {
-              iconTheme: { primary: '#f43f5e', secondary: '#080c14' },
+              iconTheme: { primary: '#EF4444', secondary: '#FFFFFF' },
             },
           }}
         />

@@ -41,80 +41,66 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="glass p-8 w-full max-w-md" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
-      <h1
-        className="text-2xl font-bold mb-1"
-        style={{ fontFamily: 'var(--font-display)', color: '#e2eaf5' }}
-      >
+    <div className="glass p-8 w-full max-w-md bg-white border border-gray-200 shadow-xl rounded-2xl">
+      <h1 className="text-2xl font-bold mb-1 text-gray-900 font-display">
         Create workspace
       </h1>
-      <p className="text-sm mb-8" style={{ color: '#7a93b4' }}>
-        Start managing tasks with Aero
+      <p className="text-sm mb-8 text-gray-500">
+        Start managing tasks with Taskflow
       </p>
 
-      {/* Google OAuth - Primary Option */}
+      {/* Google OAuth */}
       <button
         onClick={handleGoogle}
-        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-aero-sm text-sm font-medium transition-all"
-        style={{
-          background: 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))',
-          border: '1px solid rgba(56,196,232,0.5)',
-          color: '#e2eaf5',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.3), rgba(79,142,247,0.3))';
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))';
-        }}
+        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-xl text-sm font-medium transition-all bg-gray-50 border border-gray-200 text-gray-900 hover:bg-gray-100"
       >
         <Chrome size={16} />
         Sign up with Google
       </button>
 
       <div className="flex items-center gap-3 mb-6">
-        <div className="flex-1 h-px" style={{ background: 'rgba(30,45,69,0.8)' }} />
-        <span className="text-xs" style={{ color: '#3d5478' }}>or</span>
-        <div className="flex-1 h-px" style={{ background: 'rgba(30,45,69,0.8)' }} />
+        <div className="flex-1 h-px bg-gray-100" />
+        <span className="text-xs text-gray-400">or</span>
+        <div className="flex-1 h-px bg-gray-100" />
       </div>
 
       <form onSubmit={handleSignup} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+          <label className="block text-xs font-medium mb-2 text-gray-500">
             Full Name
           </label>
           <div className="relative">
-            <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#3d5478' }} />
+            <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Your name"
               required
-              className="aero-input pl-10"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>Email</label>
+          <label className="block text-xs font-medium mb-2 text-gray-500">Email</label>
           <div className="relative">
-            <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#3d5478' }} />
+            <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="aero-input pl-10"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>Password</label>
+          <label className="block text-xs font-medium mb-2 text-gray-500">Password</label>
           <div className="relative">
-            <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#3d5478' }} />
+            <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             <input
               type="password"
               value={password}
@@ -122,7 +108,7 @@ export default function SignupPage() {
               placeholder="Min. 8 characters"
               minLength={8}
               required
-              className="aero-input pl-10"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
             />
           </div>
         </div>
@@ -130,20 +116,19 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary w-full flex items-center justify-center gap-2 mt-6"
-          style={{ height: '44px' }}
+          className="w-full flex items-center justify-center gap-2 mt-6 h-[44px] bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-all disabled:opacity-50"
         >
           {loading ? (
-            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
             <>Create Account <ArrowRight size={15} /></>
           )}
         </button>
       </form>
 
-      <p className="text-center text-sm mt-6" style={{ color: '#7a93b4' }}>
+      <p className="text-center text-sm mt-6 text-gray-500">
         Already have an account?{' '}
-        <Link href="/auth/login" className="font-medium" style={{ color: '#38c4e8' }}>
+        <Link href="/auth/login" className="font-medium text-black hover:underline">
           Sign in
         </Link>
       </p>

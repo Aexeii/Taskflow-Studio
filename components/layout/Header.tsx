@@ -23,40 +23,28 @@ export default function Header({ title, subtitle, showViewToggle = true }: Heade
 
   return (
     <header
-      className="flex items-center justify-between px-6 py-4 flex-shrink-0"
-      style={{
-        borderBottom: '1px solid rgba(30,45,69,0.5)',
-        background: 'rgba(8,12,20,0.6)',
-        backdropFilter: 'blur(12px)',
-      }}
+      className="flex items-center justify-between px-8 py-6 flex-shrink-0 bg-white border-b border-gray-100"
     >
       <div className="flex items-center gap-4">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="lg:hidden p-2 rounded-xl transition-colors"
-          style={{ color: '#7a93b4', background: 'rgba(30,45,69,0.4)' }}
+          className="lg:hidden p-2 rounded-xl text-gray-400 hover:bg-gray-50 transition-colors"
         >
           <Menu size={18} />
         </button>
         <div>
-          <h1
-            className="text-xl font-bold leading-tight"
-            style={{ fontFamily: 'var(--font-display)', color: '#e2eaf5' }}
-          >
+          <h1 className="text-xl font-bold leading-tight text-gray-900 font-display">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-xs mt-0.5" style={{ color: '#7a93b4' }}>{subtitle}</p>
+            <p className="text-xs mt-0.5 text-gray-400">{subtitle}</p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {showViewToggle && (
-          <div
-            className="hidden sm:flex items-center p-1 rounded-xl gap-0.5"
-            style={{ background: 'rgba(13,20,34,0.8)', border: '1px solid rgba(30,45,69,0.6)' }}
-          >
+          <div className="hidden sm:flex items-center p-1 bg-gray-50 border border-gray-100 rounded-xl gap-0.5">
             {VIEW_MODES.map(({ mode, icon: Icon, label }) => (
               <button
                 key={mode}
@@ -64,11 +52,8 @@ export default function Header({ title, subtitle, showViewToggle = true }: Heade
                 title={label}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all',
+                  viewMode === mode ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'
                 )}
-                style={{
-                  color: viewMode === mode ? '#38c4e8' : '#7a93b4',
-                  background: viewMode === mode ? 'rgba(56,196,232,0.1)' : 'transparent',
-                }}
               >
                 <Icon size={14} />
                 <span className="hidden md:inline">{label}</span>
@@ -79,8 +64,7 @@ export default function Header({ title, subtitle, showViewToggle = true }: Heade
 
         <button
           onClick={() => openTaskModal()}
-          className="btn-primary flex items-center gap-2"
-          style={{ padding: '8px 16px', fontSize: '13px' }}
+          className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition-all shadow-sm"
         >
           <Plus size={15} />
           <span className="hidden sm:inline">Add Task</span>

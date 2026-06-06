@@ -43,26 +43,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuthRoute) {
-    url.pathname = '/dashboard';
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
-}
-
-export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
-};    url.pathname.startsWith('/calendar');
-
-  if (!user && isDashboardRoute) {
-    url.pathname = '/auth/login';
-    return NextResponse.redirect(url);
-  }
-
-  if (user && isAuthRoute) {
+  if (user && isAuthRoute && url.pathname !== '/auth/callback') {
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }

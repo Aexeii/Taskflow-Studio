@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/app-store';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, parseISO } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PRIORITY_CONFIG } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export default function CalendarView() {
   const { tasks, openTaskModal } = useAppStore();
@@ -23,94 +24,103 @@ export default function CalendarView() {
   }
 
   return (
-    <div className="px-6 pb-6 flex flex-col h-full">
+    <div className="px-8 pb-8 flex flex-col h-full">
       {/* Month nav */}
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => setCurrent(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
-          className="p-2 rounded-xl transition-colors"
-          style={{ background: 'rgba(30,45,69,0.4)', color: '#7a93b4', border: '1px solid rgba(30,45,69,0.6)' }}
-        >
-          <ChevronLeft size={16} />
-        </button>
-
-        <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: '#e2eaf5', fontSize: '20px' }}>
-          {format(current, 'MMMM yyyy')}
-        </h2>
-
-        <button
-          onClick={() => setCurrent(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
-          className="p-2 rounded-xl transition-colors"
-          style={{ background: 'rgba(30,45,69,0.4)', color: '#7a93b4', border: '1px solid rgba(30,45,69,0.6)' }}
-        >
-          <ChevronRight size={16} />
-        </button>
-      </div>
-
-      {/* Day headers */}
-      <div className="grid grid-cols-7 mb-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-          <div key={d} className="text-center text-xs font-semibold py-2" style={{ color: '#3d5478' }}>
-            {d}
-          </div>
-        ))}
-      </div>
-
-      {/* Grid */}
-      <div className="grid grid-cols-7 gap-1.5 flex-1">
-        {paddedDays.map((day, i) => {
-          if (!day) return <div key={`pad-${i}`} />;
-          const dayTasks = getTasksForDay(day);
-          const today = isToday(day);
-          const inMonth = isSameMonth(day, current);
-
-          return (
-            <div
-              key={day.toISOString()}
-              className="rounded-xl p-2 min-h-[80px] flex flex-col transition-colors cursor-default"
-              style={{
-                background: today
-                  ? 'rgba(56,196,232,0.06)'
-                  : 'rgba(13,20,34,0.4)',
-                border: today
-                  ? '1px solid rgba(56,196,232,0.25)'
-                  : '1px solid rgba(30,45,69,0.35)',
-                opacity: inMonth ? 1 : 0.3,
-              }}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <h2 className="font-display font-bold text-gray-900 text-2xl">
+            {format(current, 'MMMM yyyy')}
+          </h2>
+          <div className="flex items-center bg-white border border-gray-100 rounded-xl p-1 shadow-sm">
+            <button
+              onClick={() => setCurrent(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors"
             >
-              <span
-                className="text-xs font-semibold mb-1.5 w-6 h-6 flex items-center justify-center rounded-full"
-                style={{
-                  color: today ? '#38c4e8' : '#7a93b4',
-                  background: today ? 'rgba(56,196,232,0.15)' : 'transparent',
-                }}
-              >
-                {format(day, 'd')}
-              </span>
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              onClick={() => setCurrent(new Date())}
+              className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              Today
+            </button>
+            <button
+              onClick={() => setCurrent(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
 
-              <div className="flex flex-col gap-1 flex-1 overflow-hidden">
-                {dayTasks.slice(0, 3).map(task => (
-                  <button
-                    key={task.id}
-                    onClick={() => openTaskModal(task)}
-                    className="text-left text-xs px-1.5 py-0.5 rounded-md truncate w-full transition-opacity hover:opacity-80"
-                    style={{
-                      background: PRIORITY_CONFIG[task.priority].bg,
-                      color: PRIORITY_CONFIG[task.priority].color,
-                    }}
-                  >
-                    {task.title}
-                  </button>
-                ))}
-                {dayTasks.length > 3 && (
-                  <span className="text-xs" style={{ color: '#3d5478' }}>
-                    +{dayTasks.length - 3} more
-                  </span>
-                )}
-              </div>
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex-1 flex flex-col">
+        {/* Day headers */}
+        <div className="grid grid-cols-7 border-b border-gray-50 bg-gray-50/50">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+            <div key={d} className="text-center text-[10px] font-bold uppercase tracking-[0.2em] py-4 text-gray-400">
+              {d}
             </div>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-7 flex-1">
+          {paddedDays.map((day, i) => {
+            if (!day) return <div key={`pad-${i}`} className="border-r border-b border-gray-50/50 bg-gray-50/20" />;
+            const dayTasks = getTasksForDay(day);
+            const today = isToday(day);
+            const inMonth = isSameMonth(day, current);
+
+            return (
+              <div
+                key={day.toISOString()}
+                className={cn(
+                  "p-3 min-h-[120px] flex flex-col transition-colors border-r border-b border-gray-50",
+                  !inMonth && "bg-gray-50/20 opacity-40"
+                )}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span
+                    className={cn(
+                      "text-xs font-bold w-7 h-7 flex items-center justify-center rounded-lg transition-all",
+                      today ? "bg-black text-white shadow-md scale-110" : "text-gray-400"
+                    )}
+                  >
+                    {format(day, 'd')}
+                  </span>
+                  {dayTasks.length > 0 && (
+                    <span className="text-[10px] font-bold text-gray-300">{dayTasks.length}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1.5 flex-1 overflow-y-auto custom-scrollbar">
+                  {dayTasks.slice(0, 4).map(task => (
+                    <button
+                      key={task.id}
+                      onClick={() => openTaskModal(task)}
+                      className="text-left text-[10px] font-bold px-2 py-1.5 rounded-lg truncate w-full transition-all hover:scale-[1.02] shadow-sm border border-black/5"
+                      style={{
+                        background: PRIORITY_CONFIG[task.priority].bg,
+                        color: PRIORITY_CONFIG[task.priority].color,
+                      }}
+                    >
+                      {task.title}
+                    </button>
+                  ))}
+                  {dayTasks.length > 4 && (
+                    <button 
+                      onClick={() => {/* could open a day view */}}
+                      className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors pl-1"
+                    >
+                      + {dayTasks.length - 4} more
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -1,18 +1,18 @@
-# ⚡ Aero Tasks
+# ⚡ Taskflow Studio
 
-A dark futuristic task management web app built with **Next.js 14**, **MongoDB + Prisma**, and a custom **glassmorphism design system**.
+A clean, modern task management web app built with **Next.js 14**, **Supabase**, and a custom **white/beige/cream/black/gray** design system.
 
 ## ✨ Features
 
-- Kanban board with drag-and-drop (dnd-kit)
-- List view + Calendar view
-- Project organization with color coding
-- Task CRUD with priority, status, tags, due dates
-- Search + multi-filter system
-- JWT authentication with MongoDB
-- Real-time cloud sync
-- Fully responsive — mobile, tablet, desktop
-- Dark glassmorphism UI system
+- **Kanban Board**: Drag-and-drop task organization (dnd-kit)
+- **List View**: Detailed list of tasks with sorting and filtering
+- **Calendar View**: Visual task scheduling
+- **Timeline View**: Project roadmap (Coming Soon)
+- **Project Organization**: Color-coded projects and progress tracking
+- **Task CRUD**: Manage priority, status, tags, and due dates
+- **Advanced Filtering**: Search and multi-filter system
+- **Authentication**: Secure login/signup via Supabase (Email/Password & Google)
+- **Responsive Design**: Optimized for mobile, tablet, and desktop
 
 ## 🚀 Quick Start
 
@@ -22,34 +22,20 @@ A dark futuristic task management web app built with **Next.js 14**, **MongoDB +
 npm install
 ```
 
-### 2. Set Up MongoDB
+### 2. Set Up Supabase
 
-1. Create a project at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a cluster and get your connection string
-3. Update `.env.local` with your MongoDB URL
+1. Create a project at [Supabase](https://supabase.com)
+2. Run the provided `supabase-schema.sql` in the Supabase SQL Editor
+3. Update `.env.local` with your Supabase credentials
 
 ### 3. Environment Variables
 
-```bash
-cp .env.example .env.local
-```
-
-Fill in `.env.local`:
-
 ```env
-DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/taskflow?retryWrites=true&w=majority"
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here
-NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-### 4. Setup Prisma
-
-```bash
-npm run db:push
-```
-
-### 5. Run Development Server
+### 4. Run Development Server
 
 ```bash
 npm run dev
@@ -59,39 +45,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🛠️ Stack
 
-- **Frontend**: Next.js 14 · React 18 · Tailwind CSS · Framer Motion
-- **Backend**: Next.js API Routes · Node.js
-- **Database**: MongoDB · Prisma ORM
-- **Auth**: JWT · bcryptjs
-- **UI Components**: dnd-kit · Lucide React · react-hot-toast
+- **Frontend**: Next.js 14 (App Router) · React 18 · Tailwind CSS · Framer Motion
+- **Backend**: Next.js API Routes · Supabase SSR
+- **Database**: PostgreSQL (Supabase)
+- **Auth**: Supabase Auth (Email & Google)
+- **UI Components**: dnd-kit · Lucide React · react-hot-toast · Zustand
 - **Deployment**: Vercel
-
-## 📁 Project Structure
-
-```
-app/
-├── api/              # API routes
-│   ├── auth/         # Authentication endpoints
-│   ├── tasks/        # Task management endpoints
-│   └── projects/     # Project management endpoints
-├── auth/             # Auth pages (login, signup)
-├── dashboard/        # Main dashboard
-└── layout.tsx        # Root layout
-
-components/          # Reusable components
-lib/                 # Utilities
-├── db.ts             # Prisma client
-└── auth.ts           # Auth helpers
-
-prisma/              # Database schema
-└── schema.prisma
-```
-
-## 🌐 Deploy to Vercel
-
-```bash
-npx vercel
-```
 
 ## 📝 License
 

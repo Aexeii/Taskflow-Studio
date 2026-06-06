@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Github, Chrome } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Chrome } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -36,82 +36,40 @@ export default function LoginPage() {
     });
   }
 
-  async function handleGithub() {
-    await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: { redirectTo: `${location.origin}/auth/callback` },
-    });
-  }
-
   return (
-    <div className="glass p-8 w-full max-w-md" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
-      <h1
-        className="text-2xl font-bold mb-1"
-        style={{ fontFamily: 'var(--font-display)', color: '#e2eaf5' }}
-      >
+    <div className="glass p-8 w-full max-w-md bg-white border border-gray-200 shadow-xl rounded-2xl">
+      <h1 className="text-2xl font-bold mb-1 text-gray-900 font-display">
         Welcome back
       </h1>
-      <p className="text-sm mb-8" style={{ color: '#7a93b4' }}>
+      <p className="text-sm mb-8 text-gray-500">
         Sign in to your workspace
       </p>
 
       {/* Google OAuth - Primary */}
       <button
         onClick={handleGoogle}
-        className="w-full flex items-center justify-center gap-2.5 mb-3 py-3 rounded-aero-sm text-sm font-medium transition-all"
-        style={{
-          background: 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))',
-          border: '1px solid rgba(56,196,232,0.5)',
-          color: '#e2eaf5',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.3), rgba(79,142,247,0.3))';
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, rgba(56,196,232,0.2), rgba(79,142,247,0.2))';
-        }}
+        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-xl text-sm font-medium transition-all bg-gray-50 border border-gray-200 text-gray-900 hover:bg-gray-100"
       >
         <Chrome size={16} />
         Continue with Google
       </button>
 
-      {/* GitHub OAuth - Secondary */}
-      <button
-        onClick={handleGithub}
-        className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-aero-sm text-sm font-medium transition-all"
-        style={{
-          background: 'rgba(30,45,69,0.5)',
-          border: '1px solid rgba(30,45,69,0.9)',
-          color: '#e2eaf5',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(30,45,69,0.8)';
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(30,45,69,0.5)';
-        }}
-      >
-        <Github size={16} />
-        Continue with GitHub
-      </button>
-
       <div className="flex items-center gap-3 mb-6">
-        <div className="flex-1 h-px" style={{ background: 'rgba(30,45,69,0.8)' }} />
-        <span className="text-xs" style={{ color: '#3d5478' }}>or</span>
-        <div className="flex-1 h-px" style={{ background: 'rgba(30,45,69,0.8)' }} />
+        <div className="flex-1 h-px bg-gray-100" />
+        <span className="text-xs text-gray-400">or</span>
+        <div className="flex-1 h-px bg-gray-100" />
       </div>
 
       <form onSubmit={handleLogin} className="space-y-4">
         {/* Email */}
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+          <label className="block text-xs font-medium mb-2 text-gray-500">
             Email
           </label>
           <div className="relative">
             <Mail
               size={15}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ color: '#3d5478' }}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"
             />
             <input
               type="email"
@@ -119,21 +77,20 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="aero-input pl-10"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
             />
           </div>
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+          <label className="block text-xs font-medium mb-2 text-gray-500">
             Password
           </label>
           <div className="relative">
             <Lock
               size={15}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ color: '#3d5478' }}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"
             />
             <input
               type={showPw ? 'text' : 'password'}
@@ -141,13 +98,12 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="aero-input pl-10 pr-10"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
             />
             <button
               type="button"
               onClick={() => setShowPw(!showPw)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2"
-              style={{ color: '#3d5478' }}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400"
             >
               {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
@@ -157,11 +113,10 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary w-full flex items-center justify-center gap-2 mt-6"
-          style={{ height: '44px' }}
+          className="w-full flex items-center justify-center gap-2 mt-6 h-[44px] bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-all disabled:opacity-50"
         >
           {loading ? (
-            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
             <>
               Sign In <ArrowRight size={15} />
@@ -170,12 +125,11 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-center text-sm mt-6" style={{ color: '#7a93b4' }}>
+      <p className="text-center text-sm mt-6 text-gray-500">
         Don&apos;t have an account?{' '}
         <Link
           href="/auth/signup"
-          className="font-medium transition-colors"
-          style={{ color: '#38c4e8' }}
+          className="font-medium text-black hover:underline"
         >
           Create one
         </Link>

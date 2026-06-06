@@ -5,7 +5,7 @@ import { useAppStore } from '@/store/app-store';
 import { createClient } from '@/lib/supabase/client';
 import { X, Flag, Folder, Calendar, Tag, Type, AlignLeft } from 'lucide-react';
 import type { Priority, TaskStatus } from '@/types';
-import { PRIORITY_CONFIG, STATUS_CONFIG, PROJECT_COLORS } from '@/lib/utils';
+import { PRIORITY_CONFIG, STATUS_CONFIG } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export default function TaskModal() {
@@ -86,7 +86,7 @@ export default function TaskModal() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
         onClick={closeTaskModal}
       />
 
@@ -95,34 +95,25 @@ export default function TaskModal() {
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         onClick={e => e.target === e.currentTarget && closeTaskModal()}
       >
-        <div
-          className="w-full max-w-lg rounded-2xl overflow-hidden"
-          style={{
-            background: 'rgba(11,17,28,0.98)',
-            border: '1px solid rgba(30,45,69,0.8)',
-            boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
-            backdropFilter: 'blur(40px)',
-          }}
-        >
+        <div className="w-full max-w-lg bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid rgba(30,45,69,0.5)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: '#e2eaf5', fontSize: '18px' }}>
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-50">
+            <h2 className="font-display font-bold text-gray-900 text-lg">
               {editingTask ? 'Edit Task' : 'New Task'}
             </h2>
             <button
               onClick={closeTaskModal}
-              className="p-1.5 rounded-lg transition-colors"
-              style={{ color: '#7a93b4' }}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
             >
               <X size={18} />
             </button>
           </div>
 
           {/* Body */}
-          <div className="px-6 py-5 space-y-5">
+          <div className="px-6 py-5 space-y-6">
             {/* Title */}
             <div>
-              <label className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+              <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                 <Type size={12} /> Title
               </label>
               <input
@@ -130,14 +121,13 @@ export default function TaskModal() {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="What needs to be done?"
-                className="aero-input"
-                style={{ fontSize: '15px', fontWeight: 500 }}
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-black/5 transition-all font-medium"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+              <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                 <AlignLeft size={12} /> Description
               </label>
               <textarea
@@ -145,15 +135,14 @@ export default function TaskModal() {
                 onChange={e => setDescription(e.target.value)}
                 placeholder="Add more context..."
                 rows={3}
-                className="aero-input resize-none"
-                style={{ lineHeight: '1.6' }}
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-black/5 transition-all resize-none leading-relaxed"
               />
             </div>
 
             {/* Priority + Status row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+                <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                   <Flag size={12} /> Priority
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -161,12 +150,12 @@ export default function TaskModal() {
                     <button
                       key={p}
                       onClick={() => setPriority(p)}
-                      className="px-2.5 py-1 rounded-lg text-xs font-medium transition-all"
-                      style={{
-                        background: priority === p ? PRIORITY_CONFIG[p].bg : 'rgba(13,20,34,0.6)',
-                        color: priority === p ? PRIORITY_CONFIG[p].color : '#7a93b4',
-                        border: `1px solid ${priority === p ? PRIORITY_CONFIG[p].color + '40' : 'rgba(30,45,69,0.5)'}`,
-                      }}
+                      className={cn(
+                        'px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border',
+                        priority === p 
+                          ? 'bg-black text-white border-black' 
+                          : 'bg-gray-50 text-gray-400 border-gray-100 hover:border-gray-200'
+                      )}
                     >
                       {PRIORITY_CONFIG[p].label}
                     </button>
@@ -175,12 +164,11 @@ export default function TaskModal() {
               </div>
 
               <div>
-                <label className="text-xs font-medium mb-2 block" style={{ color: '#7a93b4' }}>Status</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2 block">Status</label>
                 <select
                   value={status}
                   onChange={e => setStatus(e.target.value as TaskStatus)}
-                  className="aero-input text-sm"
-                  style={{ height: '36px', padding: '0 12px' }}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black/5"
                 >
                   {(Object.keys(STATUS_CONFIG) as TaskStatus[]).map(s => (
                     <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
@@ -192,14 +180,13 @@ export default function TaskModal() {
             {/* Project + Due date */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+                <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                   <Folder size={12} /> Project
                 </label>
                 <select
                   value={projectId}
                   onChange={e => setProjectId(e.target.value)}
-                  className="aero-input text-sm"
-                  style={{ height: '36px', padding: '0 12px' }}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black/5"
                 >
                   <option value="">No project</option>
                   {projects.map(p => (
@@ -209,43 +196,44 @@ export default function TaskModal() {
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
+                <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
                   <Calendar size={12} /> Due Date
                 </label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={e => setDueDate(e.target.value)}
-                  className="aero-input text-sm"
-                  style={{ height: '36px', padding: '0 12px', colorScheme: 'dark' }}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black/5"
                 />
               </div>
             </div>
 
             {/* Tags */}
             <div>
-              <label className="flex items-center gap-2 text-xs font-medium mb-2" style={{ color: '#7a93b4' }}>
-                <Tag size={12} /> Tags (comma-separated)
+              <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+                <Tag size={12} /> Tags
               </label>
               <input
                 value={tags}
                 onChange={e => setTags(e.target.value)}
                 placeholder="design, frontend, urgent"
-                className="aero-input text-sm"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-black/5"
               />
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center gap-3 px-6 py-5" style={{ borderTop: '1px solid rgba(30,45,69,0.5)' }}>
-            <button onClick={closeTaskModal} className="btn-ghost flex-1">Cancel</button>
+          <div className="flex items-center gap-3 px-6 py-5 bg-gray-50 border-t border-gray-100">
+            <button onClick={closeTaskModal} className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all">
+              Cancel
+            </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="btn-primary flex-1 flex items-center justify-center gap-2"
+              className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-800 transition-all disabled:opacity-50"
             >
               {saving
-                ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 : editingTask ? 'Save Changes' : 'Create Task'
               }
             </button>

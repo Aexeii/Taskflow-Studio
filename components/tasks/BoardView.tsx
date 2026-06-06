@@ -52,6 +52,7 @@ export default function BoardView() {
   const filtered = tasks.filter(t => {
     if (filters.search && !t.title.toLowerCase().includes(filters.search.toLowerCase())) return false;
     if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
+    if (filters.status !== 'all' && t.status !== filters.status) return false; // Fixed: added status filter
     if (filters.project_id !== 'all' && t.project_id !== filters.project_id) return false;
     return true;
   });
@@ -83,7 +84,7 @@ export default function BoardView() {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex gap-5 h-full overflow-x-auto pb-4 px-6">
+      <div className="flex gap-6 h-full overflow-x-auto pb-8 px-8">
         {COLUMNS.map(status => {
           const colTasks = getColumnTasks(status);
           const cfg = STATUS_CONFIG[status];
@@ -91,34 +92,28 @@ export default function BoardView() {
             <div
               key={status}
               className="flex-shrink-0 flex flex-col"
-              style={{ width: '300px' }}
+              style={{ width: '320px' }}
             >
               {/* Column header */}
               <div
-                className="flex items-center justify-between mb-3 px-1"
+                className="flex items-center justify-between mb-4 px-1"
                 id={status}
               >
                 <div className="flex items-center gap-2.5">
                   <div
                     className="w-2 h-2 rounded-full"
-                    style={{ background: cfg.color, boxShadow: `0 0 6px ${cfg.color}` }}
+                    style={{ background: cfg.color }}
                   />
-                  <span className="text-sm font-semibold" style={{ color: '#e2eaf5' }}>
+                  <span className="text-sm font-bold text-gray-900">
                     {cfg.label}
                   </span>
-                  <span
-                    className="px-2 py-0.5 rounded-full text-xs font-medium"
-                    style={{ background: cfg.bg, color: cfg.color }}
-                  >
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">
                     {colTasks.length}
                   </span>
                 </div>
                 <button
-                  onClick={() => openTaskModal()}
-                  className="p-1 rounded-lg transition-colors"
-                  style={{ color: '#3d5478' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#7a93b4'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#3d5478'}
+                  onClick={() => openTaskModal({ status } as any)}
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all"
                 >
                   <Plus size={14} />
                 </button>
@@ -127,11 +122,7 @@ export default function BoardView() {
               {/* Drop zone column */}
               <div
                 id={status}
-                className="flex-1 rounded-2xl p-3 space-y-3 min-h-[200px] transition-colors"
-                style={{
-                  background: 'rgba(13,20,34,0.4)',
-                  border: '1px solid rgba(30,45,69,0.4)',
-                }}
+                className="flex-1 rounded-2xl p-2 space-y-3 min-h-[200px] transition-colors bg-gray-50/50 border border-gray-100/50"
               >
                 <SortableContext items={colTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                   {colTasks.map(task => (
@@ -140,11 +131,8 @@ export default function BoardView() {
                 </SortableContext>
 
                 {colTasks.length === 0 && (
-                  <div
-                    className="flex flex-col items-center justify-center h-24 rounded-xl"
-                    style={{ border: '1px dashed rgba(30,45,69,0.6)', color: '#3d5478' }}
-                  >
-                    <p className="text-xs">Drop tasks here</p>
+                  <div className="flex flex-col items-center justify-center h-24 rounded-xl border-2 border-dashed border-gray-200 text-gray-400">
+                    <p className="text-[10px] font-medium uppercase tracking-wider">Drop tasks here</p>
                   </div>
                 )}
               </div>
