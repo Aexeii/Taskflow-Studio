@@ -17,38 +17,35 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleSignup(e: React.FormEvent) {
-  async function handleSignup(e: React.FormEvent) {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  const { error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { full_name: fullName } },
-  });
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: fullName } },
+    });
 
-  if (signUpError) {
-    toast.error(signUpError.message);
+    if (signUpError) {
+      toast.error(signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      toast.error('Account created! Please sign in.');
+      router.push('/auth/login');
+    } else {
+      window.location.href = '/dashboard';
+    }
+
     setLoading(false);
-    return;
   }
-
-  // Sign in immediately after signup
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (signInError) {
-    toast.error('Account created! Please sign in.');
-    router.push('/auth/login');
-  } else {
-    window.location.href = '/dashboard';
-  }
-
-  setLoading(false);
-}
-}
 
   async function handleGoogle() {
     await supabase.auth.signInWithOAuth({
@@ -66,7 +63,6 @@ export default function SignupPage() {
         Start managing tasks with Taskflow
       </p>
 
-      {/* Google OAuth */}
       <button
         onClick={handleGoogle}
         className="w-full flex items-center justify-center gap-2.5 mb-6 py-3 rounded-xl text-sm font-medium transition-all bg-gray-50 border border-gray-200 text-gray-900 hover:bg-gray-100"
@@ -151,4 +147,4 @@ export default function SignupPage() {
       </p>
     </div>
   );
-}
+        }
