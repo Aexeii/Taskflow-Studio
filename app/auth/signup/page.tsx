@@ -38,10 +38,11 @@ export default function SignupPage() {
     });
 
     if (signInError) {
-      toast.error('Account created! Please sign in.');
+      toast.success('Account created! Please sign in.');
       router.push('/auth/login');
     } else {
-      window.location.href = '/dashboard';
+      router.push('/dashboard');
+      router.refresh();
     }
 
     setLoading(false);
