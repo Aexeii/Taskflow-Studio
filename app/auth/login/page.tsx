@@ -23,8 +23,7 @@ export default function LoginPage() {
     if (error) {
       toast.error(error.message);
     } else {
-      router.push('/dashboard');
-      router.refresh();
+      window.location.href = '/dashboard';
     }
     setLoading(false);
   }
