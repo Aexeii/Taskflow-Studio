@@ -21,12 +21,17 @@ export default function TaskModal() {
   const [tags, setTags] = useState('');
   const [saving, setSaving] = useState(false);
 
+  // A real edit only when we have an existing task with an id. The board
+  // column "+" passes a partial task ({ status }) to pre-fill a NEW task,
+  // so we must not treat that as an update.
+  const isEdit = Boolean(editingTask && editingTask.id);
+
   useEffect(() => {
     if (editingTask) {
-      setTitle(editingTask.title);
+      setTitle(editingTask.title ?? '');
       setDescription(editingTask.description ?? '');
-      setPriority(editingTask.priority);
-      setStatus(editingTask.status);
+      setPriority(editingTask.priority ?? 'medium');
+      setStatus(editingTask.status ?? 'todo');
       setDueDate(editingTask.due_date ? editingTask.due_date.split('T')[0] : '');
       setProjectId(editingTask.project_id ?? '');
       setTags(editingTask.tags?.join(', ') ?? '');
@@ -56,7 +61,7 @@ export default function TaskModal() {
       tags: tagArr.length ? tagArr : null,
     };
 
-    if (editingTask) {
+    if (isEdit && editingTask) {
       const { error } = await supabase.from('tasks').update(payload).eq('id', editingTask.id);
       if (!error) {
         updateTask(editingTask.id, { ...payload, description: payload.description ?? undefined, project_id: payload.project_id ?? undefined, due_date: payload.due_date ?? undefined, tags: tagArr });
@@ -99,7 +104,7 @@ export default function TaskModal() {
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-50">
             <h2 className="font-display font-bold text-gray-900 text-lg">
-              {editingTask ? 'Edit Task' : 'New Task'}
+              {isEdit ? 'Edit Task' : 'New Task'}
             </h2>
             <button
               onClick={closeTaskModal}
@@ -234,7 +239,7 @@ export default function TaskModal() {
             >
               {saving
                 ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                : editingTask ? 'Save Changes' : 'Create Task'
+                : isEdit ? 'Save Changes' : 'Create Task'
               }
             </button>
           </div>

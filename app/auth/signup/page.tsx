@@ -20,7 +20,7 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
 
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName } },
@@ -32,18 +32,29 @@ export default function SignupPage() {
       return;
     }
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError) {
-      toast.success('Account created! Please sign in.');
-      window.location.href = '/auth/login';
-    } else {
+    // If sign-up already returned a session (email confirmation disabled),
+    // go straight to the dashboard.
+    if (data.session) {
+      toast.success('Welcome to Taskflow!');
       window.location.href = '/dashboard';
+      return;
     }
 
+    // Otherwise try to establish a session explicitly.
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword({ email, password });
+
+    if (signInData?.session) {
+      toast.success('Welcome to Taskflow!');
+      window.location.href = '/dashboard';
+      return;
+    }
+
+    // No session available — email confirmation is required.
+    if (signInError) {
+      toast.success('Account created! Check your email to confirm, then sign in.');
+    }
+    window.location.href = '/auth/login';
     setLoading(false);
   }
 

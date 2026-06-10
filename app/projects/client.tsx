@@ -163,9 +163,9 @@ export default function ProjectsClient({ initialTasks, initialProjects }: Props)
                   )}
                 </div>
                 <div>
-                  {viewMode === 'board' && <BoardView />}
-                  {viewMode === 'list' && <ListView />}
-                  {viewMode === 'timeline' && <TimelineView />}
+                  {viewMode === 'board' && <BoardView projectId={selectedProject.id} />}
+                  {viewMode === 'list' && <ListView projectId={selectedProject.id} />}
+                  {viewMode === 'timeline' && <TimelineView projectId={selectedProject.id} />}
                 </div>
               </div>
             ) : (

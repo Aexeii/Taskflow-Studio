@@ -6,11 +6,17 @@ import { format, startOfWeek, addDays, isSameDay, parseISO, startOfMonth, endOfM
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 
-export default function TimelineView() {
+interface TimelineViewProps {
+  /** When set (e.g. on the Projects page) only tasks for this project are shown. */
+  projectId?: string;
+}
+
+export default function TimelineView({ projectId }: TimelineViewProps = {}) {
   const { tasks, filters, projects, openTaskModal } = useAppStore();
 
   const filtered = useMemo(() => {
     return tasks.filter(t => {
+      if (projectId && t.project_id !== projectId) return false;
       if (filters.search && !t.title.toLowerCase().includes(filters.search.toLowerCase())) return false;
       if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
       if (filters.status !== 'all' && t.status !== filters.status) return false;
@@ -21,7 +27,7 @@ export default function TimelineView() {
       if (!b.due_date) return -1;
       return parseISO(a.due_date).getTime() - parseISO(b.due_date).getTime();
     });
-  }, [tasks, filters]);
+  }, [tasks, filters, projectId]);
 
   // Generate 14 days for the timeline
   const timelineDays = useMemo(() => {
@@ -93,9 +99,10 @@ export default function TimelineView() {
                     <div key={i} className="border-r border-gray-50 last:border-r-0 h-full" />
                   ))}
                   
-                  {/* Task Bar */}
+                  {/* Task Bar — uses a 14-col grid so gridColumnStart aligns the
+                      bar under the correct due-date day. */}
                   {taskDate && (
-                    <div className="absolute inset-0 flex items-center px-2">
+                    <div className="absolute inset-0 grid grid-cols-14 items-center px-1">
                       {timelineDays.map((day, i) => {
                         if (isSameDay(day, taskDate)) {
                           return (
@@ -106,7 +113,7 @@ export default function TimelineView() {
                                 background: project?.color || '#000',
                                 opacity: task.status === 'done' ? 0.4 : 1
                               }}
-                              className="h-8 rounded-lg shadow-sm flex items-center px-3 text-[10px] font-bold text-white truncate animate-fade-in"
+                              className="h-8 mx-1 rounded-lg shadow-sm flex items-center px-3 text-[10px] font-bold text-white truncate animate-fade-in"
                             >
                               {format(taskDate, 'HH:mm')}
                             </div>

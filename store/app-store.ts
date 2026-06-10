@@ -47,7 +47,7 @@ export const useAppStore = create<AppState>((set) => ({
   filters: defaultFilters,
   viewMode: 'board',
   selectedProjectId: null,
-  sidebarOpen: true,
+  sidebarOpen: false,
   taskModalOpen: false,
   editingTask: null,
 
