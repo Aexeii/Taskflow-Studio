@@ -7,11 +7,17 @@ import { CheckCircle2, Circle, Flag, Calendar, Trash2, Edit3, Clock } from 'luci
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/utils';
 
-export default function ListView() {
+interface ListViewProps {
+  /** When set (e.g. on the Projects page) only tasks for this project are shown. */
+  projectId?: string;
+}
+
+export default function ListView({ projectId }: ListViewProps = {}) {
   const { tasks, updateTask, deleteTask, openTaskModal, filters, projects } = useAppStore();
   const supabase = createClient();
 
   const filtered = tasks.filter(t => {
+    if (projectId && t.project_id !== projectId) return false;
     if (filters.search && !t.title.toLowerCase().includes(filters.search.toLowerCase())) return false;
     if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
     if (filters.status !== 'all' && t.status !== filters.status) return false;

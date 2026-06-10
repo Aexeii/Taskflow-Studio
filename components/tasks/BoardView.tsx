@@ -11,6 +11,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
@@ -22,6 +23,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'done', 'cancelled'];
 
@@ -39,8 +41,30 @@ function SortableTaskCard({ task }: { task: Task }) {
   );
 }
 
-export default function BoardView() {
-  const { tasks, updateTask, openTaskModal, filters } = useAppStore();
+/** Registers each column as a real dnd-kit droppable so tasks can be
+ *  dropped onto it (including empty columns). */
+function ColumnDropZone({ status, children }: { status: TaskStatus; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({ id: status });
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        'flex-1 rounded-2xl p-2 space-y-3 min-h-[200px] transition-colors border',
+        isOver ? 'bg-gray-100 border-gray-300' : 'bg-gray-50/50 border-gray-100/50'
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+interface BoardViewProps {
+  /** When set (e.g. on the Projects page) only tasks for this project are shown. */
+  projectId?: string;
+}
+
+export default function BoardView({ projectId }: BoardViewProps = {}) {
+  const { tasks, reorderTasks, openTaskModal, filters } = useAppStore();
   const supabase = createClient();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -50,9 +74,10 @@ export default function BoardView() {
 
   // Filter
   const filtered = tasks.filter(t => {
+    if (projectId && t.project_id !== projectId) return false;
     if (filters.search && !t.title.toLowerCase().includes(filters.search.toLowerCase())) return false;
     if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
-    if (filters.status !== 'all' && t.status !== filters.status) return false; // Fixed: added status filter
+    if (filters.status !== 'all' && t.status !== filters.status) return false;
     if (filters.project_id !== 'all' && t.project_id !== filters.project_id) return false;
     return true;
   });
@@ -71,15 +96,63 @@ export default function BoardView() {
     const { active, over } = e;
     if (!over) return;
 
-    // Dropped on a column header
-    const newStatus = over.id as TaskStatus;
-    if (COLUMNS.includes(newStatus)) {
-      const task = tasks.find(t => t.id === active.id);
-      if (task && task.status !== newStatus) {
-        updateTask(task.id, { status: newStatus });
-        await supabase.from('tasks').update({ status: newStatus }).eq('id', task.id);
-      }
+    const activeId = String(active.id);
+    const overId = String(over.id);
+    if (activeId === overId) return;
+
+    const activeTask = tasks.find(t => t.id === activeId);
+    if (!activeTask) return;
+
+    // Resolve the destination column: either the column itself (when dropped
+    // on empty space / header) or the column of the task we dropped onto.
+    const overIsColumn = (COLUMNS as string[]).includes(overId);
+    const targetStatus: TaskStatus = overIsColumn
+      ? (overId as TaskStatus)
+      : (tasks.find(t => t.id === overId)?.status ?? activeTask.status);
+
+    // Build the destination column ordering without the active task.
+    const destTasks = tasks
+      .filter(t => t.status === targetStatus && t.id !== activeId)
+      .sort((a, b) => a.order_index - b.order_index);
+
+    // Where to insert: before the task we hovered, or at the end of the column.
+    let insertIndex = destTasks.length;
+    if (!overIsColumn) {
+      const idx = destTasks.findIndex(t => t.id === overId);
+      if (idx !== -1) insertIndex = idx;
     }
+
+    const movedTask: Task = { ...activeTask, status: targetStatus };
+    destTasks.splice(insertIndex, 0, movedTask);
+
+    // Re-index the destination column so ordering persists.
+    const reindexed = destTasks.map((t, i) => ({ ...t, order_index: i }));
+
+    // Nothing actually changed (same column, same position).
+    const changed = reindexed.some(rt => {
+      const orig = tasks.find(t => t.id === rt.id);
+      return !orig || orig.status !== rt.status || orig.order_index !== rt.order_index;
+    });
+    if (!changed) return;
+
+    // Optimistic local update.
+    const byId = new Map(reindexed.map(t => [t.id, t]));
+    reorderTasks(tasks.map(t => byId.get(t.id) ?? t));
+
+    // Persist only the rows that changed.
+    await Promise.all(
+      reindexed
+        .filter(rt => {
+          const orig = tasks.find(t => t.id === rt.id);
+          return !orig || orig.status !== rt.status || orig.order_index !== rt.order_index;
+        })
+        .map(rt =>
+          supabase
+            .from('tasks')
+            .update({ status: rt.status, order_index: rt.order_index })
+            .eq('id', rt.id)
+        )
+    );
   }
 
   return (
@@ -95,10 +168,7 @@ export default function BoardView() {
               style={{ width: '320px' }}
             >
               {/* Column header */}
-              <div
-                className="flex items-center justify-between mb-4 px-1"
-                id={status}
-              >
+              <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2.5">
                   <div
                     className="w-2 h-2 rounded-full"
@@ -120,10 +190,7 @@ export default function BoardView() {
               </div>
 
               {/* Drop zone column */}
-              <div
-                id={status}
-                className="flex-1 rounded-2xl p-2 space-y-3 min-h-[200px] transition-colors bg-gray-50/50 border border-gray-100/50"
-              >
+              <ColumnDropZone status={status}>
                 <SortableContext items={colTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                   {colTasks.map(task => (
                     <SortableTaskCard key={task.id} task={task} />
@@ -135,7 +202,7 @@ export default function BoardView() {
                     <p className="text-[10px] font-medium uppercase tracking-wider">Drop tasks here</p>
                   </div>
                 )}
-              </div>
+              </ColumnDropZone>
             </div>
           );
         })}
